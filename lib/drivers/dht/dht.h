@@ -2,7 +2,6 @@
 #define DHT11_H_
 
 #include <stdint.h>
-// #include "driver/gpio.h"
 
 typedef enum
 {

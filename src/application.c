@@ -3,12 +3,19 @@
 #include <stdio.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+#include "wifi/wifi.h"
 
 struct dht11_reading dht11;
+SemaphoreHandle_t xSemaphore = NULL;
 
 void init_hw()
 {
     dht11_init();
+}
+
+void connect_to_wifi(void *arg)
+{
+    init_wifi();
 }
 
 void measure_temperature_humidity(void *arg)
