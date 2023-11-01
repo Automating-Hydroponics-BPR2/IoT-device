@@ -1,12 +1,11 @@
-#include "dht/dht.h"
+#include "application.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
 
-void app_main()
+void app_main(void)
 {
-    dht11_init();
-    struct dht11_reading reading = dht11_read_data();
-    printf("Status: %d\n", reading.status);
-    printf("Humidity: %f\n", reading.humidity);
-    printf("Temperature: %f\n", reading.temperature);
+    init_hw();
+    xTaskCreate(measure_temperature_humidity, "Temp-Hum", 4096, NULL, 10, NULL);
 }
