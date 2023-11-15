@@ -18,6 +18,15 @@
 #define WIFI_SSID "Nokia 9"
 #define WIFI_PASS "ec01a18d27fc"
 
+typedef void (*on_connected_f)(void);
+typedef void (*on_failed_f)(void);
+
+typedef struct
+{
+    on_connected_f on_connected;
+    on_failed_f on_failed;
+} connect_wifi_params_t;
+
 void init_wifi();
 
 #endif

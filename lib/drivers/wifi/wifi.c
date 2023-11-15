@@ -2,13 +2,15 @@
 
 static int retry_cnt = 0;
 static const char *TAG = "wifi_app";
+static connect_wifi_params_t m_params;
 
 EventGroupHandle_t wifi_events;
 
 static void handle_wifi_connection(void *, esp_event_base_t, int32_t, void *);
 
-void init_wifi()
+void init_wifi(connect_wifi_params_t p)
 {
+    m_params = p;
     if (nvs_flash_init() != ESP_OK)
     {
         nvs_flash_erase();
@@ -72,11 +74,19 @@ static void handle_wifi_connection(void *arg, esp_event_base_t event_base,
         }
         else
         {
+            if (m_params.on_failed)
+            {
+                m_params.on_failed();
+            }
             xEventGroupSetBits(wifi_events, WIFI_FAIL_BIT);
         }
     }
     else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP)
     {
+        if (m_params.on_connected)
+        {
+            m_params.on_connected();
+        }
         ip_event_got_ip_t *event = (ip_event_got_ip_t *)event_data;
         ESP_LOGI(TAG, "ip: %d.%d.%d.%d", IP2STR(&event->ip_info.ip));
         retry_cnt = 0;
