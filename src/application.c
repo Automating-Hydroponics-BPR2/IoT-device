@@ -24,11 +24,6 @@ void connect_to_wifi(void *arg)
     init_wifi(cbs);
 }
 
-/*void connect_to_mqtt(void *arg)
-{
-    handle_wifi_connect();
-}*/
-
 void measure_temperature_humidity(void *arg)
 {
     vTaskDelay(pdMS_TO_TICKS(1000));
@@ -39,6 +34,6 @@ void measure_temperature_humidity(void *arg)
         // printf("Humidity: %f\n", dht11.humidity);
         // printf("Temperature: %f\n", dht11.temperature);
         publish_reading(dht11.temperature, dht11.humidity);
-        vTaskDelay(pdMS_TO_TICKS(5000));
+        vTaskDelay(pdMS_TO_TICKS(50000));
     }
 }

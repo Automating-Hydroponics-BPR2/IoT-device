@@ -10,14 +10,15 @@
 
 #include "mqtt_client.h"
 
-#ifndef MQTT_BROKER_URL
-#define MQTT_BROKER_URL "3a77f38482f24f338a9040308154fbd5.s2.eu.hivemq.cloud:8883/mqtt"
-#endif
+#define MQTT_BROKER_HOSTNAME "3a77f38482f24f338a9040308154fbd5.s2.eu.hivemq.cloud"
+#define MQTT_BROKER_PATH "mqtt"
+#define MQTT_BROKER_USERNAME "hydroponics"
+#define MQTT_BROKER_PASSWORD "Hydroponics123"
+#define MQTT_BROKER_PORT 8883
+#define DEVICE_ID "ID-1"
 
-#define SENSOR_NO "1"
-#define ENABLE_TOPIC "home/" SENSOR_NO "/enable"
-#define TEMP_TOPIC "home/temperature/" SENSOR_NO
-#define HUM_TOPIC "home/humidity/" SENSOR_NO
+#define ENABLE_TOPIC "home/enable"
+#define TOPIC "home/readings"
 #define TAG "app"
 
 /*void publish_reading(int temp, int hum);
@@ -26,7 +27,8 @@ void handle_mqtt_events(void *handler_args,
                         esp_event_base_t base,
                         int32_t event_id,
                         void *event_data);*/
-void publish_reading(int temp, int hum);
+
+void publish_reading(float temp, float hum);
 void handle_wifi_connect(void);
 
 void handle_wifi_failed(void);
