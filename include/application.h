@@ -3,7 +3,7 @@
 
 void measure_temperature_humidity();
 void connect_to_wifi(void *arg);
-void connect_to_mqtt(void *arg);
+void send_data(void *arg);
 void init_hw();
 
 #endif

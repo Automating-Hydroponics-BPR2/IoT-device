@@ -19,28 +19,10 @@
 
 #define ENABLE_TOPIC "home/enable"
 #define TOPIC "home/readings"
-#define TAG "app"
+#define TAG_MQTT "mqtt"
 
-/*void publish_reading(int temp, int hum);
-
-void handle_mqtt_events(void *handler_args,
-                        esp_event_base_t base,
-                        int32_t event_id,
-                        void *event_data);*/
-
-void publish_reading(float temp, float hum);
+void publish_reading(char *res);
 void handle_wifi_connect(void);
-
 void handle_wifi_failed(void);
-
-/*void app_main()
-{
-    esp_event_loop_create_default();
-
-    connect_wifi_params_t cbs = {
-        .on_connected = handle_wifi_connect,
-        .on_failed = handle_wifi_failed};
-    appwifi_connect(cbs);
-}*/
 
 #endif

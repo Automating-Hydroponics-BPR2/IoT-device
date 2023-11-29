@@ -18,6 +18,8 @@
 #define WIFI_SSID "Nokia 9"
 #define WIFI_PASS "ec01a18d27fc"
 
+#define TAG "wifi_app"
+
 typedef void (*on_connected_f)(void);
 typedef void (*on_failed_f)(void);
 

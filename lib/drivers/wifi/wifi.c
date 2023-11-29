@@ -1,7 +1,6 @@
 #include "wifi.h"
 
 static int retry_cnt = 0;
-static const char *TAG = "wifi_app";
 static connect_wifi_params_t m_params;
 
 EventGroupHandle_t wifi_events;
