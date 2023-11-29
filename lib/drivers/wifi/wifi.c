@@ -2,7 +2,6 @@
 
 static int retry_cnt = 0;
 static connect_wifi_params_t m_params;
-
 EventGroupHandle_t wifi_events;
 
 static void handle_wifi_connection(void *, esp_event_base_t, int32_t, void *);
