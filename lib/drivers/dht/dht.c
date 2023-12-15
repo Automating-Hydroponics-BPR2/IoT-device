@@ -8,9 +8,13 @@
 #define DHT11_PIN 17
 
 static gpio_num_t dht_gpio;
-static struct dht11_reading last_read;
+static struct dht11_reading last_reading;
 
-static int waitOrTimeout(uint16_t microSeconds, int level)
+/// @brief Helper method to determine Timeout error
+/// @param microSeconds
+/// @param level
+/// @return micros_ticks
+static int wait_or_timeout(uint16_t microSeconds, int level)
 {
     int micros_ticks = 0;
     while (gpio_get_level(dht_gpio) == level)
@@ -22,7 +26,10 @@ static int waitOrTimeout(uint16_t microSeconds, int level)
     return micros_ticks;
 }
 
-static int checkCRC(uint8_t data[])
+/// @brief Checks if there is CRC error
+/// @param data[]
+/// @return Status
+static int check_CRC(uint8_t data[])
 {
     if (data[4] == (data[0] + data[1] + data[2] + data[3]))
         return DHT11_OK;
@@ -30,7 +37,8 @@ static int checkCRC(uint8_t data[])
         return DHT11_CRC_ERROR;
 }
 
-static void sendStartSignal()
+/// @brief Prepare to read the data from the pin
+static void send_start_signal()
 {
     gpio_set_direction(dht_gpio, GPIO_MODE_OUTPUT);
     gpio_set_level(dht_gpio, 0);
@@ -40,26 +48,28 @@ static void sendStartSignal()
     gpio_set_direction(dht_gpio, GPIO_MODE_INPUT);
 }
 
-static int checkResponse()
+static int check_response()
 {
     /// Wait for next step ~80us
-    if (waitOrTimeout(80, 0) == DHT11_TIMEOUT_ERROR)
+    if (wait_or_timeout(80, 0) == DHT11_TIMEOUT_ERROR)
         return DHT11_TIMEOUT_ERROR;
 
     /// Wait for next step ~80us
-    if (waitOrTimeout(80, 1) == DHT11_TIMEOUT_ERROR)
+    if (wait_or_timeout(80, 1) == DHT11_TIMEOUT_ERROR)
         return DHT11_TIMEOUT_ERROR;
 
     return DHT11_OK;
 }
 
-static struct dht11_reading timeoutError()
+/// @brief Prepare timeout error struct to be returned
+static struct dht11_reading timeout_error()
 {
     struct dht11_reading timeoutError = {DHT11_TIMEOUT_ERROR, -1, -1};
     return timeoutError;
 }
 
-static struct dht11_reading crcError()
+/// @brief Prepare CRC error struct to be returned
+static struct dht11_reading crc_Error()
 {
     struct dht11_reading crcError = {DHT11_CRC_ERROR, -1, -1};
     return crcError;
@@ -76,34 +86,35 @@ struct dht11_reading dht11_read_data()
 {
     uint8_t data[5] = {0, 0, 0, 0, 0};
 
-    sendStartSignal();
+    send_start_signal();
 
-    if (checkResponse() == DHT11_TIMEOUT_ERROR)
-        return last_read = timeoutError();
+    if (check_response() == DHT11_TIMEOUT_ERROR)
+        return last_reading = timeout_error();
 
     /// Read response
     for (int i = 0; i < 40; i++)
     {
         /// Initial data
-        if (waitOrTimeout(50, 0) == DHT11_TIMEOUT_ERROR)
-            return last_read = timeoutError();
+        if (wait_or_timeout(50, 0) == DHT11_TIMEOUT_ERROR)
+            return last_reading = timeout_error();
 
-        if (waitOrTimeout(70, 1) > 28)
+        if (wait_or_timeout(70, 1) > 28)
         {
             /// Bit received was a 1
             data[i / 8] |= (1 << (7 - (i % 8)));
         }
     }
 
-    if (checkCRC(data) != DHT11_CRC_ERROR)
+    if (check_CRC(data) != DHT11_CRC_ERROR)
     {
-        last_read.status = DHT11_OK;
-        last_read.temperature = data[2] + (float)data[3] * 0.1;
-        last_read.humidity = data[0] + (float)data[1] * 0.1;
-        return last_read;
+        last_reading.status = DHT11_OK;
+        last_reading.temperature = data[2] + (float)data[3] * 0.1;
+        last_reading.humidity = data[0] + (float)data[1] * 0.1;
+        return last_reading;
     }
     else
     {
-        return last_read = crcError();
+        last_reading = crc_Error();
+        return last_reading;
     }
 }

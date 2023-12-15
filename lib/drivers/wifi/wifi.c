@@ -6,9 +6,9 @@ EventGroupHandle_t wifi_events;
 
 static void handle_wifi_connection(void *, esp_event_base_t, int32_t, void *);
 
-void init_wifi(connect_wifi_params_t p)
+void init_wifi(connect_wifi_params_t params)
 {
-    m_params = p;
+    m_params = params;
     if (nvs_flash_init() != ESP_OK)
     {
         nvs_flash_erase();
@@ -31,6 +31,7 @@ void init_wifi(connect_wifi_params_t p)
         },
     };
 
+    /// Configure WiFi to STA mode and start connection
     esp_netif_init();
     esp_netif_create_default_wifi_sta();
     wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
@@ -39,6 +40,7 @@ void init_wifi(connect_wifi_params_t p)
     esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_config);
     esp_wifi_start();
 
+    /// Set evetn bits
     EventBits_t bits = xEventGroupWaitBits(wifi_events,
                                            WIFI_CONNECTED_BIT | WIFI_FAIL_BIT,
                                            pdFALSE,

@@ -5,6 +5,6 @@
 #include "math.h"
 #include <stdio.h>
 
-void ftoa(float n, char *res, int afterpoint);
+void float_to_string(float number, char *res, int afterpoint);
 
 #endif
