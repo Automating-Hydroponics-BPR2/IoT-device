@@ -4,15 +4,15 @@
 esp_mqtt_client_handle_t client = NULL;
 bool enabled = false;
 
-void publish_reading(char *res)
+void publish_readings(char *data)
 {
     if (client != NULL)
     {
-        esp_mqtt_client_publish(client, TOPIC, res, 0, 2, 0);
+        esp_mqtt_client_publish(client, READINGS_TOPIC, data, 0, 2, 0);
     }
 }
 
-void handle_mqtt_events(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data)
+static void handle_mqtt_events(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data)
 {
     esp_mqtt_event_handle_t event = event_data;
 
@@ -21,7 +21,6 @@ void handle_mqtt_events(void *handler_args, esp_event_base_t base, int32_t event
     case MQTT_EVENT_CONNECTED:
         ESP_LOGI(TAG_MQTT, "mqtt broker connected");
         esp_mqtt_client_subscribe(client, ENABLE_TOPIC, 2);
-        esp_mqtt_client_subscribe(client, TOPIC, 2);
         break;
     case MQTT_EVENT_DATA:
         if (!strncmp(event->topic, ENABLE_TOPIC, event->topic_len))
